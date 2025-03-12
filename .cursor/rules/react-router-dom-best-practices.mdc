@@ -1,0 +1,11 @@
+---
+description: Best practices for routing in React applications
+globs: **/*.{ts,tsx,js,jsx}
+alwaysApply: false
+---
+
+
+- Use nested routes for better organization
+- Implement dynamic routing for scalability
+- Utilize route loaders for data fetching
+- Use the `useNavigate` hook for programmatic navigation
