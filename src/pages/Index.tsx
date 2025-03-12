@@ -50,11 +50,11 @@ const Home = () => {
   const [showCards, setShowCards] = useState(false);
   
   const demoCards = [
-    { id: "personal", title: "Personal Information", content: "Name: John Doe\nAge: 32\nEmail: john@example.com\nContact: (555) 123-4567" },
-    { id: "education", title: "Education", content: "Bachelor of Science\nComputer Science\nGraduation: 2015\nGPA: 3.8/4.0" },
-    { id: "medical", title: "Medical Records", content: "Blood Type: O+\nAllergies: None\nLast Checkup: March 15, 2023\nVaccinations: Up to date" },
-    { id: "employment", title: "Employment", content: "Company: Tech Innovations Inc.\nPosition: Senior Developer\nStart Date: June 2018\nSalary: $95,000" },
-    { id: "vehicle", title: "Vehicle Information", content: "Make: Toyota\nModel: Camry\nYear: 2020\nLicense: ABC-1234\nLast Service: 01/15/2023" },
+    { id: "personal", title: "Personal Information", content: "Name: Sanjay VVV\nAge: 16\nEmail: fresher@opal.com\nContact: (949) 564 1983" },
+    { id: "education", title: "Education", content: "Bachelor of Minors\nComputer Science\nGraduation: 2032 (w/o supplie)\nGPA: 0.1/4.0" },
+    { id: "medical", title: "Medical Records", content: "Blood Type: B-\nAllergies: Dust\nLast Checkup: January 16, 2005\nVaccinations: Up to date" },
+    { id: "employment", title: "Employment", content: "Company: Lolan s Inc.\nPosition: Under Sanjay\nStart Date: tomorrow\nSalary: ₹69.420" },
+    { id: "vehicle", title: "Vehicle Information", content: "Make: Tesla\nModel: Cybertruck\nYear: 1992\nLicense: KL47-6969\nLast Service: 11/03/2025" },
   ];
 
   // Calculate initial positions in a grid-like pattern
