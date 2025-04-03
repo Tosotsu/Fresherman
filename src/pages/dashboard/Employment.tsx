@@ -60,7 +60,7 @@ function Employment() {
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
-  
+
   // Fetch user data on component mount
   useEffect(() => {
     const fetchUser = async () => {
@@ -172,7 +172,7 @@ function Employment() {
       });
       return;
     }
-    
+
     setIsLoading(true);
     
     try {
@@ -221,7 +221,7 @@ function Employment() {
       });
       return;
     }
-    
+
     setIsLoading(true);
     
     try {
@@ -249,7 +249,7 @@ function Employment() {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
@@ -260,65 +260,65 @@ function Employment() {
             {!isAdding && !isEditing && (
               <Button onClick={handleStartAdd}>Add Employment</Button>
             )}
-          </div>
-          
+        </div>
+        
           {/* Form for adding/editing */}
           {(isAdding || isEditing) && (
             <Card className="mb-6">
-              <CardHeader>
+                  <CardHeader>
                 <CardTitle>{isAdding ? 'Add New Employment' : 'Edit Employment'}</CardTitle>
-                <CardDescription>
+                    <CardDescription>
                   Enter your employment details below
-                </CardDescription>
-              </CardHeader>
+                    </CardDescription>
+                  </CardHeader>
               <CardContent>
-                <div className="space-y-6">
+                      <div className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
+                        <div className="space-y-2">
                       <Label htmlFor="company_name">Company Name</Label>
-                      <Input
+                          <Input 
                         id="company_name"
                         name="company_name"
                         value={currentRecord.company_name}
                         onChange={handleInputChange}
-                        placeholder="Company name"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
+                            placeholder="Company name"
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
                       <Label htmlFor="position">Position</Label>
-                      <Input
-                        id="position"
-                        name="position"
+                          <Input 
+                            id="position" 
+                            name="position" 
                         value={currentRecord.position}
                         onChange={handleInputChange}
-                        placeholder="Job title"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
+                            placeholder="Job title"
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
                       <Label htmlFor="start_date">Start Date</Label>
-                      <Input
+                          <Input 
                         id="start_date"
                         name="start_date"
                         type="date"
                         value={currentRecord.start_date}
                         onChange={handleInputChange}
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
                       <Label htmlFor="end_date">End Date</Label>
-                      <Input
+                          <Input 
                         id="end_date"
                         name="end_date"
-                        type="date"
+                            type="date" 
                         value={currentRecord.end_date || ''}
                         onChange={handleInputChange}
                         disabled={currentRecord.is_current_job}
-                      />
-                    </div>
-                    
+                          />
+                        </div>
+                        
                     <div className="space-y-2 col-span-2">
                       <div className="flex items-center space-x-2">
                         <Checkbox 
@@ -328,9 +328,9 @@ function Employment() {
                         />
                         <Label htmlFor="is_current_job">Current Job</Label>
                       </div>
-                    </div>
-                    
-                    <div className="space-y-2">
+                      </div>
+                      
+                      <div className="space-y-2">
                       <Label htmlFor="location">Location</Label>
                       <Input
                         id="location"
@@ -338,12 +338,12 @@ function Employment() {
                         value={currentRecord.location}
                         onChange={handleInputChange}
                         placeholder="City, State, Country"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
+                        />
+                      </div>
+                      
+                      <div className="space-y-2">
                       <Label htmlFor="salary">Salary</Label>
-                      <Input
+                        <Input 
                         id="salary"
                         name="salary"
                         type="number"
@@ -353,20 +353,20 @@ function Employment() {
                       />
                     </div>
                     
-                    <div className="space-y-2">
+                        <div className="space-y-2">
                       <Label htmlFor="supervisor_name">Supervisor Name</Label>
-                      <Input
+                          <Input 
                         id="supervisor_name"
                         name="supervisor_name"
                         value={currentRecord.supervisor_name || ''}
                         onChange={handleInputChange}
                         placeholder="Name of supervisor"
-                      />
-                    </div>
-                    
-                    <div className="space-y-2">
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
                       <Label htmlFor="supervisor_contact">Supervisor Contact</Label>
-                      <Input
+                          <Input 
                         id="supervisor_contact"
                         name="supervisor_contact"
                         value={currentRecord.supervisor_contact || ''}
@@ -374,9 +374,9 @@ function Employment() {
                         placeholder="Email or phone"
                       />
                     </div>
-                  </div>
-                  
-                  <div className="space-y-2">
+                        </div>
+                        
+                        <div className="space-y-2">
                     <Label htmlFor="description">Job Description</Label>
                     <Textarea
                       id="description"
@@ -385,10 +385,10 @@ function Employment() {
                       onChange={handleInputChange}
                       placeholder="Brief job description"
                       className="min-h-[80px]"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
                     <Label htmlFor="responsibilities">Responsibilities</Label>
                     <Textarea
                       id="responsibilities"
@@ -397,21 +397,21 @@ function Employment() {
                       onChange={handleInputChange}
                       placeholder="Main job responsibilities"
                       className="min-h-[120px]"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
                     <Label htmlFor="achievements">Achievements</Label>
-                    <Textarea
+                        <Textarea 
                       id="achievements"
                       name="achievements"
                       value={currentRecord.achievements || ''}
                       onChange={handleInputChange}
                       placeholder="Your key achievements in this role"
                       className="min-h-[80px]"
-                    />
-                  </div>
-                  
+                        />
+                      </div>
+                      
                   {!currentRecord.is_current_job && (
                     <div className="space-y-2">
                       <Label htmlFor="reason_for_leaving">Reason for Leaving</Label>
@@ -459,7 +459,7 @@ function Employment() {
                             <span>{record.company_name}</span>
                             <span className="text-xs">{record.location}</span>
                           </CardDescription>
-                        </div>
+              </div>
                         
                         <div className="flex space-x-2">
                           <Button 
@@ -469,21 +469,21 @@ function Employment() {
                           >
                             Edit
                           </Button>
-                          <Button 
+                            <Button 
                             variant="destructive" 
                             size="sm"
                             onClick={() => record.id && handleDelete(record.id)}
                           >
                             Delete
-                          </Button>
-                        </div>
-                      </div>
+                            </Button>
+                                </div>
+                                  </div>
                     </CardHeader>
                     <CardContent>
                       <div className="text-sm border-t pt-3">
                         <div className="flex justify-between mb-3">
                           <div className="font-medium">
-                            <span>
+                                <span>
                               {new Date(record.start_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
                               {' - '}
                               {record.is_current_job 
@@ -492,7 +492,7 @@ function Employment() {
                                   ? new Date(record.end_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
                                   : 'N/A'
                               }
-                            </span>
+                                </span>
                             
                             {record.is_current_job && (
                               <span className="ml-2 bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full">
@@ -504,8 +504,8 @@ function Employment() {
                           {record.salary && (
                             <div className="text-right">
                               Salary: ${record.salary.toLocaleString()}
-                            </div>
-                          )}
+                      </div>
+                    )}
                         </div>
                         
                         <div className="space-y-3">
@@ -513,21 +513,21 @@ function Employment() {
                             <div>
                               <h4 className="font-medium">Description</h4>
                               <p className="text-muted-foreground">{record.description}</p>
-                            </div>
+                        </div>
                           )}
                           
                           {record.responsibilities && (
                             <div>
                               <h4 className="font-medium">Responsibilities</h4>
                               <p className="text-muted-foreground">{record.responsibilities}</p>
-                            </div>
+                        </div>
                           )}
                           
                           {record.achievements && (
                             <div>
                               <h4 className="font-medium">Achievements</h4>
                               <p className="text-muted-foreground">{record.achievements}</p>
-                            </div>
+                        </div>
                           )}
                           
                           {!record.is_current_job && record.reason_for_leaving && (
@@ -537,15 +537,15 @@ function Employment() {
                             </div>
                           )}
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </CardContent>
+                </Card>
                 ))
               )}
-            </div>
-          )}
-        </div>
-      </main>
+              </div>
+            )}
+          </div>
+        </main>
     </div>
   );
 }

@@ -63,6 +63,17 @@ const Sidebar: React.FC<SidebarProps> = ({
         console.error(error);
         return;
       }
+      
+      // Clear user-specific data from local storage
+      localStorage.removeItem('user-vehicles');
+      localStorage.removeItem('user-maintenance-records');
+      localStorage.removeItem('user-medical-records');
+      localStorage.removeItem('user-employment-records');
+      localStorage.removeItem('user-education-records');
+      localStorage.removeItem('user-documents');
+      localStorage.removeItem('user-personal-info');
+      // Add any other keys specific to your application here
+      
       toast.success('Signed out successfully');
       navigate('/signin');
     } catch (error) {

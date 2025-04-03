@@ -8,13 +8,15 @@ export async function syncDataWithSupabase<T extends { id?: string; user_id?: st
   userId: string
 ): Promise<{ success: boolean; error?: string }> {
   if (!userId) {
+    console.error('syncDataWithSupabase: Aborted - User not authenticated');
     return { success: false, error: 'User not authenticated' };
   }
 
   try {
-    // Prepare updates and inserts
     const updates = [];
     const inserts = [];
+
+    console.log(`syncDataWithSupabase: Processing ${data.length} items for table ${table}`);
 
     for (const item of data) {
       // Remove updated_at and created_at, rely on database triggers/defaults
@@ -22,32 +24,42 @@ export async function syncDataWithSupabase<T extends { id?: string; user_id?: st
       const record = { ...itemData, user_id: userId };
       
       if (item.id) {
+        console.log(`syncDataWithSupabase: Preparing UPDATE for ID ${item.id}`, record);
         updates.push(supabase.from(table).update(record).eq('id', item.id).eq('user_id', userId));
       } else {
+        console.log(`syncDataWithSupabase: Preparing INSERT`, record); // Log the record being inserted
         inserts.push(supabase.from(table).insert(record));
       }
     }
 
     // Execute all updates and inserts
     if (updates.length > 0) {
-      const results = await Promise.all(updates);
-      for (const result of results) {
-        if (result.error) throw result.error;
+      console.log(`syncDataWithSupabase: Executing ${updates.length} updates...`);
+      const updateResults = await Promise.all(updates);
+      console.log('syncDataWithSupabase: Update results:', updateResults);
+      for (const result of updateResults) {
+        if (result.error) throw result.error; // Throw first update error
       }
     }
     if (inserts.length > 0) {
-      const results = await Promise.all(inserts);
-      for (const result of results) {
-        if (result.error) throw result.error;
+      console.log(`syncDataWithSupabase: Executing ${inserts.length} inserts...`);
+      const insertResults = await Promise.all(inserts);
+      console.log('syncDataWithSupabase: Insert results:', insertResults);
+      for (const result of insertResults) {
+        if (result.error) { // Log specific insert error before throwing
+            console.error('syncDataWithSupabase: Insert failed!', result.error);
+            throw result.error; 
+        }
       }
     }
     
+    console.log(`syncDataWithSupabase: Sync successful for table ${table}`);
     return { success: true };
   } catch (error) {
-    console.error(`Error syncing data with Supabase for table ${table}:`, error);
+    console.error(`syncDataWithSupabase: Error syncing data for table ${table}:`, error);
     return { 
       success: false, 
-      error: error instanceof Error ? error.message : 'Unknown error occurred' 
+      error: error instanceof Error ? error.message : 'Unknown error occurred during sync' 
     };
   }
 }

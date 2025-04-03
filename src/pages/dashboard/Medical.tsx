@@ -52,7 +52,7 @@ function Medical() {
     weight: '',
     allergies: [],
     emergency_contact: {
-      name: '',
+    name: '',
       relationship: '',
       phone: ''
     },
@@ -70,7 +70,7 @@ function Medical() {
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
-  
+
   // Fetch user data on component mount
   useEffect(() => {
     const fetchUser = async () => {
@@ -82,9 +82,9 @@ function Medical() {
           description: "Please sign in to view your medical records",
           variant: "destructive",
         });
-        return;
-      }
-      
+      return;
+    }
+
       setUserId(data.user.id);
       fetchMedicalRecords(data.user.id);
     };
@@ -204,7 +204,7 @@ function Medical() {
       });
       return;
     }
-    
+
     setIsLoading(true);
     
     try {
@@ -245,6 +245,8 @@ function Medical() {
   
   // Delete a record
   const handleDelete = async (id: string) => {
+    console.log(`Attempting to delete record with ID: ${id} for User ID: ${userId}`); // Debugging line
+    
     if (!userId) {
       toast({
         title: "Authentication Error",
@@ -253,12 +255,25 @@ function Medical() {
       });
       return;
     }
-    
+
+    // Ensure ID is valid before proceeding
+    if (!id) {
+      console.error('Delete aborted: Record ID is undefined or null');
+      toast({
+        title: "Error Deleting Record",
+        description: "Cannot delete record without a valid ID.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     
     try {
       // Use the deleteItem helper which includes user_id check
+      console.log(`Calling deleteItem for table: medical_records, ID: ${id}, User: ${userId}`); // Debugging line
       const result = await deleteItem('medical_records', id, userId);
+      console.log('deleteItem result:', result); // Debugging line
       
       if (!result.success) {
         throw new Error(result.error || 'Failed to delete record from database');
@@ -282,7 +297,7 @@ function Medical() {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <div className="flex h-screen bg-gray-100">
       <Sidebar isCollapsed={isCollapsed} toggleSidebar={toggleSidebar} />
@@ -293,23 +308,23 @@ function Medical() {
             {!isAdding && !isEditing && (
               <Button onClick={handleStartAdd}>Add Medical Record</Button>
             )}
-          </div>
-          
+        </div>
+        
           {/* Form for adding/editing */}
           {(isAdding || isEditing) && (
             <Card className="mb-6">
-              <CardHeader>
+                <CardHeader>
                 <CardTitle>{isAdding ? 'Add New Medical Record' : 'Edit Medical Record'}</CardTitle>
-                <CardDescription>
+                  <CardDescription>
                   Enter your medical information below
-                </CardDescription>
-              </CardHeader>
+                  </CardDescription>
+                </CardHeader>
               <CardContent>
                 <div className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="record_type">Record Type</Label>
-                      <Input
+                      <Input 
                         id="record_type"
                         name="record_type"
                         value={currentRecord.record_type}
@@ -320,7 +335,7 @@ function Medical() {
                     
                     <div className="space-y-2">
                       <Label htmlFor="date">Date</Label>
-                      <Input
+                      <Input 
                         id="date"
                         name="date"
                         type="date"
@@ -331,7 +346,7 @@ function Medical() {
                     
                     <div className="space-y-2">
                       <Label htmlFor="blood_type">Blood Type</Label>
-                      <Input
+                      <Input 
                         id="blood_type"
                         name="blood_type"
                         value={currentRecord.blood_type}
@@ -342,7 +357,7 @@ function Medical() {
                     
                     <div className="space-y-2">
                       <Label htmlFor="height">Height (cm)</Label>
-                      <Input
+                      <Input 
                         id="height"
                         name="height"
                         value={currentRecord.height}
@@ -353,7 +368,7 @@ function Medical() {
                     
                     <div className="space-y-2">
                       <Label htmlFor="weight">Weight (kg)</Label>
-                      <Input
+                      <Input 
                         id="weight"
                         name="weight"
                         value={currentRecord.weight}
@@ -372,15 +387,15 @@ function Medical() {
                         placeholder="Add an allergy"
                         className="flex-1"
                       />
-                      <Button 
+                          <Button 
                         type="button" 
                         onClick={handleAddAllergy}
                         variant="secondary"
                       >
                         Add
-                      </Button>
-                    </div>
-                    
+                          </Button>
+                            </div>
+                            
                     {currentRecord.allergies && currentRecord.allergies.length > 0 ? (
                       <div className="flex flex-wrap gap-2 mt-2">
                         {currentRecord.allergies.map((allergy, index) => (
@@ -393,20 +408,20 @@ function Medical() {
                             >
                               &times;
                             </button>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
                       <p className="text-sm text-muted-foreground">No allergies added</p>
                     )}
-                  </div>
+                    </div>
                   
                   <div className="space-y-4">
                     <h3 className="font-medium">Emergency Contact</h3>
                     <div className="grid grid-cols-3 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor="name">Name</Label>
-                        <Input
+                        <Input 
                           id="name"
                           name="name"
                           value={currentRecord.emergency_contact?.name || ''}
@@ -417,7 +432,7 @@ function Medical() {
                       
                       <div className="space-y-2">
                         <Label htmlFor="relationship">Relationship</Label>
-                        <Input
+                        <Input 
                           id="relationship"
                           name="relationship"
                           value={currentRecord.emergency_contact?.relationship || ''}
@@ -428,7 +443,7 @@ function Medical() {
                       
                       <div className="space-y-2">
                         <Label htmlFor="phone">Phone</Label>
-                        <Input
+                        <Input 
                           id="phone"
                           name="phone"
                           value={currentRecord.emergency_contact?.phone || ''}
@@ -436,22 +451,22 @@ function Medical() {
                           placeholder="Phone number"
                         />
                       </div>
+                      </div>
                     </div>
-                  </div>
-                  
-                  <div className="space-y-2">
+                    
+                    <div className="space-y-2">
                     <Label htmlFor="description">Additional Information</Label>
-                    <Textarea
+                      <Textarea 
                       id="description"
                       name="description"
                       value={currentRecord.description}
                       onChange={handleInputChange}
                       placeholder="Enter any additional medical information here"
                       className="min-h-[120px]"
-                    />
+                      />
+                    </div>
                   </div>
-                </div>
-              </CardContent>
+                </CardContent>
               <CardFooter className="flex justify-between">
                 <Button variant="outline" onClick={handleCancel}>Cancel</Button>
                 <Button 
@@ -461,14 +476,14 @@ function Medical() {
                   {isLoading ? 'Saving...' : 'Save'}
                 </Button>
               </CardFooter>
-            </Card>
+              </Card>
           )}
           
           {/* Display existing records */}
           {!isAdding && !isEditing && (
             <div className="space-y-4">
               {medicalRecords.length === 0 ? (
-                <Card>
+              <Card>
                   <CardContent className="p-6 text-center">
                     <p className="text-muted-foreground">No medical records found. Click 'Add Medical Record' to create one.</p>
                   </CardContent>
@@ -486,7 +501,7 @@ function Medical() {
                               month: 'long', 
                               day: 'numeric' 
                             })}
-                          </CardDescription>
+                  </CardDescription>
                         </div>
                         
                         <div className="flex space-x-2">
@@ -516,14 +531,14 @@ function Medical() {
                               <p className="text-muted-foreground">{record.blood_type}</p>
                             </div>
                           )}
-                          
+                            
                           {record.height && (
                             <div>
                               <h4 className="font-medium">Height</h4>
                               <p className="text-muted-foreground">{record.height} cm</p>
                             </div>
                           )}
-                          
+                            
                           {record.weight && (
                             <div>
                               <h4 className="font-medium">Weight</h4>
@@ -540,11 +555,11 @@ function Medical() {
                                 <span key={index} className="bg-secondary/50 text-secondary-foreground px-2 py-0.5 rounded-full text-xs">
                                   {allergy}
                                 </span>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                        
+                      ))}
+                    </div>
+                    </div>
+                  )}
+                  
                         {record.emergency_contact && (record.emergency_contact.name || record.emergency_contact.phone) && (
                           <div className="mb-4">
                             <h4 className="font-medium">Emergency Contact</h4>
@@ -556,24 +571,24 @@ function Medical() {
                               )}
                               {record.emergency_contact.phone && <p>{record.emergency_contact.phone}</p>}
                             </div>
-                          </div>
-                        )}
-                        
+                    </div>
+                  )}
+                  
                         {record.description && (
                           <div>
                             <h4 className="font-medium">Additional Information</h4>
                             <p className="text-muted-foreground">{record.description}</p>
-                          </div>
-                        )}
                       </div>
-                    </CardContent>
-                  </Card>
+                        )}
+                  </div>
+                </CardContent>
+              </Card>
                 ))
               )}
             </div>
           )}
         </div>
-      </main>
+        </main>
     </div>
   );
 }

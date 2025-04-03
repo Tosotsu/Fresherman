@@ -110,39 +110,58 @@ function Vehicle() {
         
         setUserId(user.id);
         
-        // Fetch vehicles
+        // Fetch vehicles for the current user
         const vehiclesResult = await fetchUserData<Vehicle>('vehicles', user.id);
         
         if (vehiclesResult.error) {
-          throw new Error(vehiclesResult.error);
-        }
-        
-        if (vehiclesResult.data && vehiclesResult.data.length > 0) {
-          setVehicles(vehiclesResult.data);
+          console.error('Error fetching vehicles:', vehiclesResult.error);
+          toast({
+            title: "Error Loading Vehicles",
+            description: vehiclesResult.error,
+            variant: "destructive",
+          });
+          // Even on error, clear potentially stale local storage data
+          setVehicles([]);
+          setMaintenanceRecords([]);
+          setSelectedVehicleId(null);
+        } else {
+          // Fetch was successful, update state with fetched data (even if empty)
+          const fetchedVehicles = vehiclesResult.data || [];
+          setVehicles(fetchedVehicles);
           
-          // Set the first vehicle as selected if none is selected
-          if (!selectedVehicleId && vehiclesResult.data.length > 0) {
-            setSelectedVehicleId(vehiclesResult.data[0].id);
-          }
-          
-          // Fetch maintenance records
-          const recordsResult = await fetchUserData<MaintenanceRecord>('maintenance_records', user.id);
-          
-          if (recordsResult.error) {
-            throw new Error(recordsResult.error);
-          }
-          
-          if (recordsResult.data) {
-            setMaintenanceRecords(recordsResult.data);
+          if (fetchedVehicles.length > 0) {
+            // Set selected vehicle only if there are vehicles
+            if (!selectedVehicleId || !fetchedVehicles.some(v => v.id === selectedVehicleId)) {
+               setSelectedVehicleId(fetchedVehicles[0].id);
+            }
+            
+            // Fetch maintenance records only if vehicles exist
+            const recordsResult = await fetchUserData<MaintenanceRecord>('maintenance_records', user.id);
+            if (recordsResult.error) {
+               console.error('Error fetching maintenance records:', recordsResult.error);
+               // Don't toast again, maybe just log
+               setMaintenanceRecords([]); // Clear potentially stale records
+            } else {
+               setMaintenanceRecords(recordsResult.data || []);
+            }
+          } else {
+             // No vehicles fetched, clear related state
+             setMaintenanceRecords([]);
+             setSelectedVehicleId(null);
           }
         }
       } catch (error) {
-        console.error('Error fetching vehicle data:', error);
+        // General catch block, might be redundant if specific errors are handled above
+        console.error('Error in fetchData:', error);
         toast({
           title: "Error Loading Data",
-          description: error instanceof Error ? error.message : "Failed to load your vehicle data",
+          description: error instanceof Error ? error.message : "Failed to load vehicle data",
           variant: "destructive",
         });
+        // Clear state on general error too
+        setVehicles([]);
+        setMaintenanceRecords([]);
+        setSelectedVehicleId(null);
       } finally {
         setIsLoading(false);
       }
@@ -180,31 +199,68 @@ function Vehicle() {
       return;
     }
 
+    // Basic validation (optional but good)
+    if (!newVehicle.make || !newVehicle.model || !newVehicle.year || !newVehicle.license_plate || !newVehicle.vin) {
+        toast({
+            title: "Missing Information",
+            description: "Please fill out all required vehicle fields.",
+            variant: "destructive",
+        });
+        return;
+    }
+
     setIsLoading(true);
     
     try {
-      const vehicleId = uuidv4();
-      const vehicleWithId = { ...newVehicle, id: vehicleId, user_id: userId };
+      const newId = uuidv4(); // Generate NEW ID
       
-      // Add to local state first for immediate UI update
-      setVehicles(prev => [...prev, vehicleWithId]);
+      const vehicleToInsert = {
+          id: newId, // Use the newly generated ID
+          user_id: userId,
+          make: newVehicle.make,
+          model: newVehicle.model,
+          year: newVehicle.year,
+          color: newVehicle.color || null, 
+          license_plate: newVehicle.license_plate,
+          vin: newVehicle.vin,
+          registration_number: newVehicle.registration_number || null,
+          insurance_provider: newVehicle.insurance_provider,
+          insurance_policy_number: newVehicle.insurance_policy_number,
+          insurance_expiry_date: newVehicle.insurance_expiry_date || null
+      };
+
+      console.log("handleAddVehicle: Attempting DIRECT insert:", vehicleToInsert); // Debug log
       
-      // Then sync with Supabase
-      const result = await syncDataWithSupabase('vehicles', [vehicleWithId], userId);
-      
-      if (!result.success) {
-        throw new Error(result.error);
+      // --- Direct Supabase Insert Call --- 
+      const { data: insertedData, error: insertError } = await supabase
+        .from('vehicles')
+        .insert(vehicleToInsert)
+        .select(); // select() is useful to get the inserted data back
+      // --- End Direct Call --- 
+
+      console.log("handleAddVehicle: Direct insert result - Error:", insertError);
+      console.log("handleAddVehicle: Direct insert result - Data:", insertedData);
+
+      if (insertError) {
+          // If the direct call fails, log the specific error
+          console.error('Direct Supabase insert failed:', insertError);
+          throw insertError; // Throw the actual Supabase error
       }
       
-      // Clear the form
+      // Add to local state only AFTER successful insert
+      if (insertedData && insertedData.length > 0) {
+        setVehicles(prev => [...prev, insertedData[0]]); // Add the actual inserted data
+      } else {
+          // Should not happen if error is null, but good to handle
+          console.warn("Supabase insert returned no error but no data?");
+          setVehicles(prev => [...prev, vehicleToInsert]); // Fallback to using original object
+      }
+
+      // Clear the form state COMPLETELY
       setNewVehicle({
-        make: '',
-        model: '',
-        year: 0,
-        license_plate: '',
-        vin: '',
-        insurance_provider: '',
-        insurance_policy_number: '',
+        id: undefined, user_id: '', make: '', model: '', year: 0,
+        color: '', license_plate: '', vin: '', registration_number: '',
+        insurance_provider: '', insurance_policy_number: '', insurance_expiry_date: ''
       });
       
       toast({
@@ -212,12 +268,11 @@ function Vehicle() {
         description: "Your vehicle has been added successfully",
       });
       
-      // Set this as the selected vehicle if none is selected
       if (!selectedVehicleId) {
-        setSelectedVehicleId(vehicleId);
+        setSelectedVehicleId(newId);
       }
     } catch (error) {
-      console.error('Error adding vehicle:', error);
+      console.error('Error adding vehicle:', error); 
       toast({
         title: "Error Adding Vehicle",
         description: error instanceof Error ? error.message : "Failed to add vehicle",
