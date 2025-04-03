@@ -1,0 +1,10 @@
+---
+description: Best practices for schema validation and type inference with Zod
+globs: **/*.{ts,tsx,js,jsx}
+alwaysApply: false
+---
+
+- Define schemas for data validation and type inference
+- Use Zod's built-in validation methods
+- Implement custom validation logic when needed
+- Utilize Zod's integration with React Hook Form for form validation
