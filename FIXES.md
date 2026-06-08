@@ -1,5 +1,5 @@
 # Fixes Applied to the Fresherman Project 
-
+ 
 This document outlines the fixes that were applied to resolve errors in the project.
 
 ## 1. Fixed DOM Nesting Error
