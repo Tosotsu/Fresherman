@@ -1,4 +1,4 @@
-# Fixes Applied to the Fresherman Project
+# Fixes Applied to the Fresherman Project 
 
 This document outlines the fixes that were applied to resolve errors in the project.
 
